@@ -13,10 +13,8 @@ server.get('Show', consentTracking.consent, cache.applyDefaultCache, function (r
     pageMetaHelper.setPageMetaTags(req.pageMetaData, Site.current);
     
     //pulliung the JSON object from custom object & setting it in response object
-    
     var configJSONValue = loadFromCache();
     if(configJSONValue ){
-        
         renderObject = {"configJSONValue": configJSONValue};
         res.render('/home/homePage',renderObject);
     }else{
@@ -32,11 +30,19 @@ server.get('ErrorNotFound', function (req, res, next) {
     next();
 });
 
+/**
+ * Function to pull the JSON config from Cache. If an entry isn't found in cache -- save one in cache.
+ * @returns {object} : value from cache
+ */
 function loadFromCache(){
     var cache = CacheMgr.getCache( 'JSONConfig' );
     return cache.get( "JSONConfigValue", function loadSiteConfiguration() {return cacheLoader();} );
 }
 
+/**
+ * Callback function which is used if an entry does not exist in cache. This method will pull the JSON from custom object.
+ * @returns {string} : JSON string from custom object
+ */
 function cacheLoader(){
     var configJsonObject = CustomObjMgr.getCustomObject("CustomCacheDemo", "1");
     if(configJsonObject && configJsonObject.custom.JSONConfig){
